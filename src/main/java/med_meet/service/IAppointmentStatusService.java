@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface IAppointmentStatusService {
     List<AppointmentStatus> getAllAppointmentStatuses();
-    AppointmentStatus getAppointmentStatusesById(Integer idAppStatus);
+    AppointmentStatus getAppointmentStatusById(Integer idAppStatus);
     AppointmentStatus saveAppointmentStatus(AppointmentStatus appointmentStatus);
     void deleteAppointmentStatus(AppointmentStatus appointmentStatus);
 }
