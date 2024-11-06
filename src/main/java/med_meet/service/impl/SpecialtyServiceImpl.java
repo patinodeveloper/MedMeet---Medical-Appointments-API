@@ -14,7 +14,7 @@ public class SpecialtyServiceImpl implements ISpecialtyService {
     private SpecialtyRepository specialtyRepository;
 
     @Override
-    public List<Specialty> getAllSpecialty() {
+    public List<Specialty> getAllSpecialties() {
         return specialtyRepository.findAll();
     }
 

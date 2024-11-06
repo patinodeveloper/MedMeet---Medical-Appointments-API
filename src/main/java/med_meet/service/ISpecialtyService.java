@@ -5,7 +5,7 @@ import med_meet.model.Specialty;
 import java.util.List;
 
 public interface ISpecialtyService {
-    List<Specialty> getAllSpecialty();
+    List<Specialty> getAllSpecialties();
     Specialty getSpecialtyById(Integer idSpecialty);
     Specialty saveSpecialty(Specialty specialty);
     void deleteSpecialty(Specialty specialty);
