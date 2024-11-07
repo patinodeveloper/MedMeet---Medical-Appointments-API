@@ -72,4 +72,28 @@ public class SpecialtyController {
 
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/name/{name}")
+    public ResponseEntity<Specialty> getSpecialtyByName(@PathVariable String name) {
+        Specialty specialty = specialtyService.findSpecialtyByName(name);
+        logger.info("Especialidad: {}", specialty);
+        if (specialty == null) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(specialty);
+    }
+
+    @GetMapping("/doctors/{idSpecialty}")
+    public ResponseEntity<Integer> getCountDoctorsInSpecialty(@PathVariable Integer idSpecialty) {
+        Specialty specialty = specialtyService.getSpecialtyById(idSpecialty);
+        if (specialty == null) {
+            return ResponseEntity.noContent().build();
+        }
+        Integer DoctorsNumber = specialtyService.countDoctorsInSpecialty(idSpecialty);
+        logger.info("Doctores (Cantidad) de la especialidad {}: {}", specialty, DoctorsNumber);
+        if (DoctorsNumber == 0) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(DoctorsNumber);
+    }
 }

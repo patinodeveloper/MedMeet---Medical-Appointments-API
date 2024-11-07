@@ -32,4 +32,14 @@ public class SpecialtyServiceImpl implements ISpecialtyService {
     public void deleteSpecialty(Specialty specialty) {
         specialtyRepository.delete(specialty);
     }
+
+    @Override
+    public Specialty findSpecialtyByName(String name) {
+        return specialtyRepository.findSpecialtyByName(name);
+    }
+
+    @Override
+    public Integer countDoctorsInSpecialty(Integer idSpecialty) {
+        return specialtyRepository.countDoctorsInSpecialty(idSpecialty);
+    }
 }
