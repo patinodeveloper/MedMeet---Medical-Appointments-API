@@ -5,10 +5,12 @@ import med_meet.service.IAppointmentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -73,5 +75,52 @@ public class AppointmentController {
         Appointment appointment = appointmentService.getAppointmentById(idAppointment);
         appointmentService.deleteAppointment(appointment);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/doctor/{idDoctor}/date/{date}")
+    public ResponseEntity<List<Appointment>> getAppointmentsByDoctorAndDate(
+            @PathVariable Integer idDoctor,
+            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        try {
+            List<Appointment> appointments = appointmentService.getAppointmentsByDoctorAndDate(idDoctor, date);
+            if (appointments.isEmpty()) {
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.ok(appointments);
+        } catch (Exception e) {
+            // Captura cualquier excepción y registra el error
+            logger.error("Error al obtener citas para el doctor con ID {} en la fecha {}", idDoctor, date, e);
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping("/doctor/{idDoctor}")
+    public ResponseEntity<List<Appointment>> getAppointmentsByDoctorId(@PathVariable Integer idDoctor) {
+        List<Appointment> appointments = appointmentService.getAppsByDoctorId(idDoctor);
+        appointments.forEach(appointment -> logger.info(appointment.toString()));
+        if (appointments.isEmpty()) {
+            ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(appointments);
+    }
+
+    @GetMapping("/patient/{idPatient}")
+    public ResponseEntity<List<Appointment>> getAppointmentsByPatientId(@PathVariable Integer idPatient) {
+        List<Appointment> appointments = appointmentService.getAppsByPatientId(idPatient);
+        if (appointments.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        appointments.forEach(appointment -> logger.info(appointment.toString()));
+        return ResponseEntity.ok(appointments);
+    }
+
+    @GetMapping("/status/{idStatus}")
+    public ResponseEntity<List<Appointment>> getAppointmentsByStatusId(@PathVariable Integer idStatus) {
+        List<Appointment> appointments = appointmentService.getAppsByStatusId(idStatus);
+        if (appointments.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        appointments.forEach(appointment -> logger.info(appointment.toString()));
+        return ResponseEntity.ok(appointments);
     }
 }

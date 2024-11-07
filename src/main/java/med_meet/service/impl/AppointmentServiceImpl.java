@@ -6,6 +6,7 @@ import med_meet.service.IAppointmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -33,4 +34,25 @@ public class AppointmentServiceImpl implements IAppointmentService {
     public void deleteAppointment(Appointment appointment) {
         appointmentRepository.delete(appointment);
     }
+
+    @Override
+    public List<Appointment> getAppointmentsByDoctorAndDate(Integer idDoctor, LocalDate date) {
+        return appointmentRepository.findAppointmentsByDoctorAndDate(idDoctor, date);
+    }
+
+    @Override
+    public List<Appointment> getAppsByDoctorId(Integer idDoctor) {
+        return appointmentRepository.findByDoctorId(idDoctor);
+    }
+
+    @Override
+    public List<Appointment> getAppsByPatientId(Integer idPatient) {
+        return appointmentRepository.findByPatientId(idPatient);
+    }
+
+    @Override
+    public List<Appointment> getAppsByStatusId(Integer idStatus) {
+        return appointmentRepository.findByStatusId(idStatus);
+    }
+
 }
