@@ -30,17 +30,20 @@ public class DoctorController {
 
     @GetMapping("/{idDoctor}")
     public ResponseEntity<Doctor> getDoctorById(@PathVariable Integer idDoctor) {
+        if (idDoctor == null) {
+            return ResponseEntity.badRequest().build();
+        }
         Doctor doctor = doctorService.getDoctorById(idDoctor);
         logger.info(doctor.toString());
         if (doctor == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(doctor);
     }
 
     @PostMapping
     public ResponseEntity<Doctor> postDoctor(@RequestBody Doctor doctor) {
-        logger.info("Doctor a agregar: " + doctor.toString());
+        logger.info("Doctor a agregar: {}", doctor.toString());
         if (doctor == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(doctor);
         }
@@ -51,7 +54,7 @@ public class DoctorController {
     @PutMapping("/{idDoctor}")
     public ResponseEntity<Doctor> updateDoctor(@PathVariable Integer idDoctor, @RequestBody Doctor receivedDoctor) {
         Doctor doctor = doctorService.getDoctorById(idDoctor);
-        logger.info("Doctor a editar: " + doctor.toString());
+        logger.info("Doctor a editar: {}", doctor.toString());
         if (receivedDoctor == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(doctor);
         }
@@ -67,10 +70,23 @@ public class DoctorController {
     @DeleteMapping("/{idDoctor}")
     public ResponseEntity<?> deleteDoctor(@PathVariable Integer idDoctor) {
         if (idDoctor == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            return ResponseEntity.badRequest().build();
         }
         Doctor doctor = doctorService.getDoctorById(idDoctor);
         doctorService.deleteDoctor(doctor);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/specialty/{idSpecialty}")
+    public ResponseEntity<List<Doctor>> getDoctorsBySpecialtyId(@PathVariable Integer idSpecialty) {
+        if (idSpecialty == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        List<Doctor> doctors = doctorService.findDoctorsBySpecialty(idSpecialty);
+        doctors.forEach(doctor -> logger.info(doctor.toString()));
+        if (doctors.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(doctors);
     }
 }

@@ -32,4 +32,9 @@ public class DoctorServiceImpl implements IDoctorService {
     public void deleteDoctor(Doctor doctor) {
         doctorRepository.delete(doctor);
     }
+
+    @Override
+    public List<Doctor> findDoctorsBySpecialty(Integer idSpecialty) {
+        return doctorRepository.findDoctorsBySpecialty(idSpecialty);
+    }
 }
