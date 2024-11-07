@@ -9,4 +9,8 @@ public interface IAppointmentStatusService {
     AppointmentStatus getAppointmentStatusById(Integer idAppStatus);
     AppointmentStatus saveAppointmentStatus(AppointmentStatus appointmentStatus);
     void deleteAppointmentStatus(AppointmentStatus appointmentStatus);
+
+    // Metodos personalizados
+    AppointmentStatus findByAppointmentId(Integer idAppointment);
+
 }

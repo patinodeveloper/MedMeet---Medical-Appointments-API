@@ -72,4 +72,32 @@ public class PatientController {
         patientService.deletePatient(patient);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/name/{name}")
+    public ResponseEntity<List<Patient>> getPatientsByName(@PathVariable String name) {
+        if (name == null) {
+            logger.info("El nombre no puede ser NULL");
+            return ResponseEntity.badRequest().build();
+        }
+        List<Patient> patients = patientService.findPatientsByNameContainingIgnoreCase(name);
+        patients.forEach(patient -> logger.info(patient.toString()));
+        if (patients.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(patients);
+    }
+
+    @GetMapping("/doctor/{idDoctor}")
+    public ResponseEntity<List<Patient>> getPatientsByDoctorId(@PathVariable Integer idDoctor) {
+        if (idDoctor == null) {
+            logger.info("El id no puede ser NULL");
+            return ResponseEntity.badRequest().build();
+        }
+        List<Patient> patients = patientService.findPatientsByDoctorId(idDoctor);
+        patients.forEach(patient -> logger.info(patient.toString()));
+        if (patients.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(patients);
+    }
 }

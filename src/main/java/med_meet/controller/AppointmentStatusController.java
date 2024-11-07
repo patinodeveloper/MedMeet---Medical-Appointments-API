@@ -71,4 +71,17 @@ public class AppointmentStatusController {
         appointmentStatusService.deleteAppointmentStatus(appointmentStatus);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/appointment/{idAppointment}")
+    public ResponseEntity<AppointmentStatus> getAppStatusByAppointmentId(@PathVariable Integer idAppointment) {
+        if (idAppointment == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        AppointmentStatus appointmentStatus = appointmentStatusService.findByAppointmentId(idAppointment);
+        if (appointmentStatus == null) {
+            logger.info("La cita no contiene un ESTADO");
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(appointmentStatus);
+    }
 }

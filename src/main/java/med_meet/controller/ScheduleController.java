@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -71,4 +72,36 @@ public class ScheduleController {
         scheduleService.deleteSchedule(schedule);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/doctor/{idDoctor}")
+    public ResponseEntity<List<Schedule>> getSchedulesByDoctorId(@PathVariable Integer idDoctor) {
+        if (idDoctor == null) {
+            logger.info("Parametros NULL no validos para idDoctor");
+            return ResponseEntity.notFound().build();
+        }
+        List<Schedule> schedules = scheduleService.findSchedulesByDoctorId(idDoctor);
+        schedules.forEach(schedule -> logger.info(schedule.toString()));
+        if (schedules.isEmpty()) {
+            logger.info("No se encontraron horarios para el doctor con el ID: {}", idDoctor);
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(schedules);
+    }
+
+    @GetMapping("/doctor/{idDoctor}/day/{day}")
+    public ResponseEntity<List<Schedule>> getSchedulesByDoctorIdAndDay(
+            @PathVariable Integer idDoctor, @PathVariable String day) {
+        if (idDoctor == null && day == null) {
+            logger.info("Parametros NULL no validos para idDoctor y day");
+            return ResponseEntity.badRequest().build();
+        }
+        List<Schedule> schedules = scheduleService.findSchedulesByDoctorIdAndDay(idDoctor, day);
+        schedules.forEach(schedule -> logger.info(schedule.toString()));
+        if (schedules.isEmpty()) {
+            logger.info("No se encontraron horarios el dia: {} para el doctor con el ID: {}", day, idDoctor);
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(schedules);
+    }
+
 }

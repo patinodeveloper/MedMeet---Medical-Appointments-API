@@ -32,4 +32,14 @@ public class ScheduleServiceImpl implements IScheduleService {
     public void deleteSchedule(Schedule schedule) {
         scheduleRepository.delete(schedule);
     }
+
+    @Override
+    public List<Schedule> findSchedulesByDoctorId(Integer idDoctor) {
+        return scheduleRepository.findByDoctorId(idDoctor);
+    }
+
+    @Override
+    public List<Schedule> findSchedulesByDoctorIdAndDay(Integer idDoctor, String day) {
+        return scheduleRepository.findByDoctorIdAndDay(idDoctor, day);
+    }
 }

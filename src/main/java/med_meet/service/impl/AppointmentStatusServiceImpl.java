@@ -32,4 +32,9 @@ public class AppointmentStatusServiceImpl implements IAppointmentStatusService {
     public void deleteAppointmentStatus(AppointmentStatus appointmentStatus) {
         appointmentStatusRepository.delete(appointmentStatus);
     }
+
+    @Override
+    public AppointmentStatus findByAppointmentId(Integer idAppointment) {
+        return appointmentStatusRepository.findByAppointmentId(idAppointment);
+    }
 }

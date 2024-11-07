@@ -32,4 +32,14 @@ public class PatientServiceImpl implements IPatientService {
     public void deletePatient(Patient patient) {
         patientRepository.delete(patient);
     }
+
+    @Override
+    public List<Patient> findPatientsByNameContainingIgnoreCase(String name) {
+        return patientRepository.findByNameContainingIgnoreCase(name);
+    }
+
+    @Override
+    public List<Patient> findPatientsByDoctorId(Integer idDoctor) {
+        return patientRepository.findByDoctorId(idDoctor);
+    }
 }
