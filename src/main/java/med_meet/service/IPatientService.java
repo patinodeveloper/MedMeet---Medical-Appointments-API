@@ -12,7 +12,7 @@ public interface IPatientService {
     void deletePatient(Patient patient);
 
     // Metodos personalizados
-    List<Patient> findPatientsByNameContainingIgnoreCase(String name);
+    List<Patient> findPatientsByName(String name);
     List<Patient> findPatientsByDoctorId(Integer idDoctor);
 
 }

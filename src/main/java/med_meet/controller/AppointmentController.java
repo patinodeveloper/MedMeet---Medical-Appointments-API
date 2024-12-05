@@ -15,9 +15,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/medmeet/api/v1/appointments")
+@CrossOrigin("http://localhost:5173")
 public class AppointmentController {
 
-    private Logger logger =
+    private final Logger logger =
             LoggerFactory.getLogger(AppointmentController.class);
 
     @Autowired
@@ -26,55 +27,62 @@ public class AppointmentController {
     @GetMapping
     public ResponseEntity<List<Appointment>> getAppointments() {
         List<Appointment> appointments = appointmentService.getAllAppointments();
+        if (appointments.isEmpty()) {
+            logger.info("No se encontraron citas en el sistema");
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
         appointments.forEach(appointment -> logger.info(appointment.toString()));
         return ResponseEntity.ok(appointments);
     }
 
     @GetMapping("/{idAppointment}")
     public ResponseEntity<Appointment> getAppointmentById(@PathVariable Integer idAppointment) {
-        if (idAppointment == null) {
-            return ResponseEntity.notFound().build();
-        }
         Appointment appointment = appointmentService.getAppointmentById(idAppointment);
         if (appointment == null) {
-            return ResponseEntity.notFound().build();
+            logger.warn("Cita con ID {} no encontrada.", idAppointment);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
+        logger.info("Cita encontrada: {}", appointment);
         return ResponseEntity.ok(appointment);
     }
 
     @PostMapping
     public ResponseEntity<Appointment> postAppointment(@RequestBody Appointment appointment) {
-        if (appointment == null) {
-            return ResponseEntity.badRequest().build();
-        }
-        appointmentService.saveAppointment(appointment);
-        return ResponseEntity.status(HttpStatus.CREATED).body(appointment);
+        logger.info("Cita a agregar: {}", appointment);
+        Appointment savedAppointment = appointmentService.saveAppointment(appointment);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedAppointment);
     }
 
     @PutMapping("/{idAppointment}")
     public ResponseEntity<Appointment> updateAppointment(
             @PathVariable Integer idAppointment, @RequestBody Appointment receivedAppointment) {
-        if (idAppointment == null || receivedAppointment == null) {
-            return ResponseEntity.notFound().build();
+        if (receivedAppointment == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         Appointment appointment = appointmentService.getAppointmentById(idAppointment);
+        if (appointment == null) {
+            logger.info("No se encontraron Citas con el ID: {} en el sistema", idAppointment);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
         appointment.setPatient(receivedAppointment.getPatient());
         appointment.setDoctor(receivedAppointment.getDoctor());
         appointment.setDateTime(receivedAppointment.getDateTime());
         appointment.setStatus(receivedAppointment.getStatus());
-        appointmentService.saveAppointment(appointment);
 
-        return ResponseEntity.noContent().build();
+        appointmentService.saveAppointment(appointment);
+        return ResponseEntity.ok(appointment);
     }
 
     @DeleteMapping("/{idAppointment}")
     public ResponseEntity<?> deleteAppointment(@PathVariable Integer idAppointment) {
-        if (idAppointment == null) {
-            return ResponseEntity.notFound().build();
-        }
         Appointment appointment = appointmentService.getAppointmentById(idAppointment);
+        if (appointment == null) {
+            logger.warn("Cita con ID {} no encontrada para eliminación.", idAppointment);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
         appointmentService.deleteAppointment(appointment);
-        return ResponseEntity.noContent().build();
+        logger.info("Cita con ID {} eliminada exitosamente.", idAppointment);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @GetMapping("/doctor/{idDoctor}/date/{date}")
@@ -84,7 +92,7 @@ public class AppointmentController {
         try {
             List<Appointment> appointments = appointmentService.getAppointmentsByDoctorAndDate(idDoctor, date);
             if (appointments.isEmpty()) {
-                return ResponseEntity.noContent().build();
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
             }
             return ResponseEntity.ok(appointments);
         } catch (Exception e) {
@@ -97,10 +105,11 @@ public class AppointmentController {
     @GetMapping("/doctor/{idDoctor}")
     public ResponseEntity<List<Appointment>> getAppointmentsByDoctorId(@PathVariable Integer idDoctor) {
         List<Appointment> appointments = appointmentService.getAppsByDoctorId(idDoctor);
-        appointments.forEach(appointment -> logger.info(appointment.toString()));
         if (appointments.isEmpty()) {
-            ResponseEntity.noContent().build();
+            logger.info("No se encontraron citas con el Doctor ID: {}", idDoctor);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
+        appointments.forEach(appointment -> logger.info(appointment.toString()));
         return ResponseEntity.ok(appointments);
     }
 
@@ -108,7 +117,8 @@ public class AppointmentController {
     public ResponseEntity<List<Appointment>> getAppointmentsByPatientId(@PathVariable Integer idPatient) {
         List<Appointment> appointments = appointmentService.getAppsByPatientId(idPatient);
         if (appointments.isEmpty()) {
-            return ResponseEntity.noContent().build();
+            logger.info("No se encontraron citas con el Paciente ID: {}", idPatient);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
         appointments.forEach(appointment -> logger.info(appointment.toString()));
         return ResponseEntity.ok(appointments);
@@ -118,7 +128,8 @@ public class AppointmentController {
     public ResponseEntity<List<Appointment>> getAppointmentsByStatusId(@PathVariable Integer idStatus) {
         List<Appointment> appointments = appointmentService.getAppsByStatusId(idStatus);
         if (appointments.isEmpty()) {
-            return ResponseEntity.noContent().build();
+            logger.info("No se encontraron citas con el Estatus ID: {}", idStatus);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
         appointments.forEach(appointment -> logger.info(appointment.toString()));
         return ResponseEntity.ok(appointments);
