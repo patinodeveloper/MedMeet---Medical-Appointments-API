@@ -20,4 +20,7 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Integer> {
     @Query("SELECT s FROM Schedule s WHERE s.doctor.id = :idDoctor AND s.day = :day")
     List<Schedule> findByDoctorIdAndDay(@Param("idDoctor") Integer idDoctor, @Param("day") String day);
 
+    // Lista todos los horarios de un día en específico
+    @Query("SELECT s FROM Schedule s WHERE s.day = :day")
+    List<Schedule> findSchedulesByDay(@Param("day") String day);
 }

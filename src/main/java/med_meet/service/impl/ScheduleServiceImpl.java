@@ -42,4 +42,9 @@ public class ScheduleServiceImpl implements IScheduleService {
     public List<Schedule> findSchedulesByDoctorIdAndDay(Integer idDoctor, String day) {
         return scheduleRepository.findByDoctorIdAndDay(idDoctor, day);
     }
+
+    @Override
+    public List<Schedule> findSchedulesByDay(String day) {
+        return scheduleRepository.findSchedulesByDay(day);
+    }
 }

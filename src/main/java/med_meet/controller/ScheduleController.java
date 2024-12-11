@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @RestController
@@ -45,8 +45,11 @@ public class ScheduleController {
     }
 
     @PostMapping
-    public ResponseEntity<Schedule> postSchedule(@RequestBody Schedule schedule) {
-        logger.info("Horario a agregar: {}", schedule);
+    public ResponseEntity<?> postSchedule(@RequestBody Schedule schedule) {
+        if (isScheduleConflict(schedule.getDay(),
+                schedule.getStartTime(), schedule.getEndTime())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Horario en conflicto con uno existente.");
+        }
         Schedule savedSchedule = scheduleService.saveSchedule(schedule);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedSchedule);
     }
@@ -104,9 +107,37 @@ public class ScheduleController {
         List<Schedule> schedules = scheduleService.findSchedulesByDoctorIdAndDay(idDoctor, day);
         if (schedules.isEmpty()) {
             logger.info("No se encontraron horarios el día: {} para el doctor con el ID: {}", day, idDoctor);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
         schedules.forEach(schedule -> logger.info(schedule.toString()));
         return ResponseEntity.ok(schedules);
     }
+
+    @GetMapping("/day/{day}")
+    public ResponseEntity<List<Schedule>> getSchedulesByDay(@PathVariable String day) {
+        if (day == null || day.trim().isEmpty()) {
+            logger.warn("Parámetros inválidos: Day es NULL o vacío.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        List<Schedule> schedules = scheduleService.findSchedulesByDay(day);
+        if (schedules.isEmpty()) {
+            logger.info("No se encontraron horarios el día: {}", day);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
+        schedules.forEach(schedule -> logger.info(schedule.toString()));
+        return ResponseEntity.ok(schedules);
+    }
+
+    public boolean isScheduleConflict(String day, LocalTime startTime, LocalTime endTime) {
+        List<Schedule> existingSchedules = scheduleService.findSchedulesByDay(day);
+        for (Schedule schedule : existingSchedules) {
+            if ((startTime.isBefore(schedule.getEndTime()) && endTime.isAfter(schedule.getStartTime())) ||
+                    (startTime.equals(schedule.getStartTime()) || endTime.equals(schedule.getEndTime()))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
+
