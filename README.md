@@ -17,7 +17,6 @@ La API gestiona los siguientes módulos:
 - **Spring Boot**: Utilizado para desarrollar la API con arquitectura REST.
 - **JPA y Hibernate**: Para la interacción con la base de datos relacional (MySQL).
 - **MySQL**: Base de datos relacional utilizada para almacenar la información de pacientes, doctores, especialidades, horarios y citas.
-- **Swagger**: Se ha integrado Swagger para la documentación de la API, facilitando la interacción con los endpoints.
 - **Dependencias**: Se utilizan varias dependencias de Spring, como Spring Web, Spring Data JPA, y MySQL Driver.
 
 ## Diagrama de Arquitectura
