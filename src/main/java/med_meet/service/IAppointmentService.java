@@ -15,5 +15,4 @@ public interface IAppointmentService {
     List<Appointment> getAppointmentsByDoctorAndDate(Integer idDoctor, LocalDate date);
     List<Appointment> getAppsByDoctorId(Integer idDoctor);
     List<Appointment> getAppsByPatientId(Integer idPatient);
-    List<Appointment> getAppsByStatusId(Integer idStatus);
 }

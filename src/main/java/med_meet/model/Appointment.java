@@ -6,7 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Entity
 @Data
@@ -27,9 +28,11 @@ public class Appointment {
     @JoinColumn(name = "doctor_id", nullable = false)
     private Doctor doctor;
 
-    private LocalDateTime dateTime;
+    private LocalDate date;
+    private LocalTime startTime;
+    private LocalTime endTime;
 
-    @ManyToOne
-    @JoinColumn(name = "status_id", nullable = false)
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private AppointmentStatus status;
 }

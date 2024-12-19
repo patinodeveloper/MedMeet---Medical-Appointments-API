@@ -14,7 +14,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Intege
     /* Consultas personalizadas */
 
     // Consultar las citas de un doctor en una fecha especifica
-    @Query("SELECT a FROM Appointment a WHERE a.doctor.id = :idDoctor AND DATE(a.dateTime) = :date")
+    @Query("SELECT a FROM Appointment a WHERE a.doctor.id = :idDoctor AND a.date = :date")
     List<Appointment> findAppointmentsByDoctorAndDate(@Param("idDoctor") Integer idDoctor, @Param("date") LocalDate date);
 
     // Listar todas las citas de un doctor
@@ -22,7 +22,4 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Intege
 
     // Listar todas las citas de un paciente
     List<Appointment> findByPatientId(Integer idPatient);
-
-    // Listar las citas por estado
-    List<Appointment> findByStatusId(Integer idStatus);
 }

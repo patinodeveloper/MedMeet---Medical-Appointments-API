@@ -56,9 +56,6 @@ public class AppointmentController {
     @PutMapping("/{idAppointment}")
     public ResponseEntity<Appointment> updateAppointment(
             @PathVariable Integer idAppointment, @RequestBody Appointment receivedAppointment) {
-        if (receivedAppointment == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
         Appointment appointment = appointmentService.getAppointmentById(idAppointment);
         if (appointment == null) {
             logger.info("No se encontraron Citas con el ID: {} en el sistema", idAppointment);
@@ -66,7 +63,9 @@ public class AppointmentController {
         }
         appointment.setPatient(receivedAppointment.getPatient());
         appointment.setDoctor(receivedAppointment.getDoctor());
-        appointment.setDateTime(receivedAppointment.getDateTime());
+        appointment.setDate(receivedAppointment.getDate());
+        appointment.setStartTime(receivedAppointment.getStartTime());
+        appointment.setEndTime(receivedAppointment.getEndTime());
         appointment.setStatus(receivedAppointment.getStatus());
 
         appointmentService.saveAppointment(appointment);
@@ -82,7 +81,7 @@ public class AppointmentController {
         }
         appointmentService.deleteAppointment(appointment);
         logger.info("Cita con ID {} eliminada exitosamente.", idAppointment);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Cita eliminada con éxito.");
     }
 
     @GetMapping("/doctor/{idDoctor}/date/{date}")
@@ -124,14 +123,4 @@ public class AppointmentController {
         return ResponseEntity.ok(appointments);
     }
 
-    @GetMapping("/status/{idStatus}")
-    public ResponseEntity<List<Appointment>> getAppointmentsByStatusId(@PathVariable Integer idStatus) {
-        List<Appointment> appointments = appointmentService.getAppsByStatusId(idStatus);
-        if (appointments.isEmpty()) {
-            logger.info("No se encontraron citas con el Estatus ID: {}", idStatus);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        }
-        appointments.forEach(appointment -> logger.info(appointment.toString()));
-        return ResponseEntity.ok(appointments);
-    }
 }

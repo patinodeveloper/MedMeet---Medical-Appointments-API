@@ -50,9 +50,4 @@ public class AppointmentServiceImpl implements IAppointmentService {
         return appointmentRepository.findByPatientId(idPatient);
     }
 
-    @Override
-    public List<Appointment> getAppsByStatusId(Integer idStatus) {
-        return appointmentRepository.findByStatusId(idStatus);
-    }
-
 }
